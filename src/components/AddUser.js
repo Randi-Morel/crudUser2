@@ -6,26 +6,38 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import CustomSelect from "./CustomSelect";
+import {Professions, Software, Education, Medicine, Experience} from "../util/contants";
 
-export const AddUser = ({nuevoUsuario, updateUser, modal, open, close, onChange, handleChange, profession}) => {
+export const AddUser = ({nuevoUsuario, updateUser, open, close, onChange, model}) => {
 
     const onClick = () => {
-        if (modal.id) {
+        if (model.id) {
             updateUser()
         } else {
             nuevoUsuario()
         }
     }
 
+
+    const ProfessionType = React.useMemo(() => {
+        switch (model.profession.name) {
+            case 'Medicine':
+                return Medicine
+            case 'Software Engineering':
+                return Software
+            case 'Education':
+                return Education
+            default:
+                return []
+        }
+    }, [model.profession.name])
+
+
     return (
         <div>
             <Dialog open={open} onClose={close}>
-                <DialogTitle> {modal.id ? "Update" : "Add"} User</DialogTitle>
+                <DialogTitle> {model.id ? "Update" : "Add"} User</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         User info
@@ -39,9 +51,11 @@ export const AddUser = ({nuevoUsuario, updateUser, modal, open, close, onChange,
                         type="text"
                         fullWidth
                         variant="standard"
-                        value={modal.name}
+                        value={model.name}
+                        style={{marginBottom:8}}
                         onChange={onChange}
                     />
+
                     <TextField
                         autoFocus
                         margin="dense"
@@ -51,24 +65,29 @@ export const AddUser = ({nuevoUsuario, updateUser, modal, open, close, onChange,
                         type="number"
                         fullWidth
                         variant="standard"
-                        value={modal.age}
+                        value={model.age}
+                        style={{marginBottom:20}}
                         onChange={onChange}
                     />
-                    <Box sx={{ minWidth: 120 }}>
-                        <FormControl variant='standard' fullWidth>
-                        <InputLabel id="profession-label">Profession</InputLabel>
-                        <Select
-                            id="profession-select"
-                            value={profession}
-                            label="Profession"
-                            onChange={handleChange}
-                        >
-                            <MenuItem value={'medicine'}>Medicine</MenuItem>
-                            <MenuItem value={'software engineering'}>Software Engineering</MenuItem>
-                            <MenuItem value={'education'}>Education</MenuItem>
-                        </Select>
-                        </FormControl>
-                    </Box>
+
+                    <CustomSelect style={{marginBottom: 20}} label={'Profession'}
+                                  onChange={(e) => onChange(e, 'profession', 'name')} value={model.profession.name}
+                                  options={Professions}/>
+
+
+                        <CustomSelect disabled={!model.profession.name} style={{marginBottom: 20}} label={'Rama'}
+                                      onChange={(e) => onChange(e, 'profession', 'branches')}
+                                      value={model.profession.branches} options={ProfessionType}/>
+
+
+
+                        <CustomSelect disabled={!model.profession.branches} style={{marginBottom: 20}} label={'Experiencia'}
+                                      onChange={(e) => onChange(e, 'profession', 'experience')} value={model.profession.experience}
+                                      options={Experience}/>
+
+
+
+
                     <TextField
                         autoFocus
                         margin="dense"
@@ -78,13 +97,14 @@ export const AddUser = ({nuevoUsuario, updateUser, modal, open, close, onChange,
                         type="email"
                         fullWidth
                         variant="standard"
-                        value={modal.email}
+                        value={model.email}
+                        style={{marginBottom:8}}
                         onChange={onChange}
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={close}>Cancel</Button>
-                    <Button onClick={onClick}>{modal.id ? "Update" : "Add"}</Button>
+                    <Button onClick={onClick}>{model.id ? "Update" : "Add"}</Button>
                 </DialogActions>
             </Dialog>
         </div>

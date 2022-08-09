@@ -16,16 +16,25 @@ class UserModel {
     name= '';
     age= '';
     email= '';
+    profession = {
+        name:null,
+        branches:null,
+        experience:null,
+    };
 }
 
 export const Users = () => {
     const [users, setUsers] = React.useState([]);
     const [open, setOpen] = React.useState(false);
     const [model, setModel] = React.useState(new UserModel());
-    const [profession, setProfession] = React.useState('');
+    const [profession, setProfession] = React.useState(null);
 
-    const handleChange = (event) => {
-        setProfession(event.target.value);
+    const handleChange = (event, type) => {
+        if (type){
+            setProfession(event.target.value);
+        }else {
+            setProfession(event.target.value);
+        }
     };
 
     const onReset = () => {
@@ -37,7 +46,7 @@ export const Users = () => {
         return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
             (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
         );
-    };
+    }
 
     const nuevoUsuario = () => {
         let id = uuidv4()
@@ -67,15 +76,25 @@ export const Users = () => {
         onReset()
     };
 
-    const onChange = ({target}) => {
+    const onChange = (e, object, objectName) => {
+        const {type, target}=e
         const {name, value} = target
-        setModel(prevState => ({...prevState, [name]: value}))
+
+        if (type==='change'){
+            setModel(prevState => ({...prevState, [name]: value}))
+        }
+
+        if (type==='click' && object ==='profession'){
+            let prevState = {...model}
+            prevState[object][objectName] = value
+            setModel(prevState)
+        }
     };
 
   return (
     <div>
         <Button variant='outlined' onClick={()=>setOpen(true)}>Nuevo Usuario</Button>
-        <AddUser open={open} close={onReset} modal={model} nuevoUsuario={nuevoUsuario} updateUser={updateUser} onChange={onChange} handleChange={handleChange} profession={profession} />
+        <AddUser model={model} open={open} close={onReset} nuevoUsuario={nuevoUsuario} updateUser={updateUser} onChange={onChange} handleChange={handleChange} profession={profession} />
         <TableContainer component={Paper}>
             <Table sx={{minWidth: 650}} aria-label="simple table">
                 <TableHead>
@@ -83,6 +102,8 @@ export const Users = () => {
                         <TableCell align="center">Users</TableCell>
                         <TableCell align="center">Age</TableCell>
                         <TableCell align="center">Profession</TableCell>
+                        <TableCell align="center">Rama</TableCell>
+                        <TableCell align="center">Experiencia</TableCell>
                         <TableCell align="center">Mail</TableCell>
                         <TableCell align="center">Acciones</TableCell>
                     </TableRow>
@@ -92,7 +113,9 @@ export const Users = () => {
                         <TableRow key={user.id}>
                             <TableCell align="center">{user.name}</TableCell>
                             <TableCell align="center">{user.age}</TableCell>
-                            <TableCell align="center">{profession}</TableCell>
+                            <TableCell align="center">{user.profession.name}</TableCell>
+                            <TableCell align="center">{user.profession.branches}</TableCell>
+                            <TableCell align="center">{user.profession.experience}</TableCell>
                             <TableCell align="center">{user.email}</TableCell>
 
                             <TableCell align='center'>
