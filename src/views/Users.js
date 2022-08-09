@@ -123,6 +123,7 @@ export const Users = () => {
                     type="text"
                     size={'small'}
                     variant="filled"
+                    InputProps={{ disableUnderline: true }}
                     style={{height:50, textDecorationLine:'none', textDecorationWidth:0}}
                     value={search}
                     onChange={(e)=>setSearch(e.target.value)}
