@@ -1,7 +1,7 @@
 import React from 'react'
-import { AddUser } from '../components/AddUser';
+import {AddUser} from '../components/AddUser';
 import Button from "@mui/material/Button";
-import {IconButton, Table} from '@mui/material'
+import {Box, IconButton, Table} from '@mui/material'
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
@@ -10,32 +10,50 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
+import TextField from "@mui/material/TextField";
 
 class UserModel {
-    id= null;
-    name= '';
-    age= '';
-    email= '';
+    id = null;
+    name = '';
+    age = '';
+    email = '';
     profession = {
-        name:null,
-        branches:null,
-        experience:null,
+        name: null,
+        branches: null,
+        experience: null,
     };
 }
 
+const userDemo = [
+    {
+        id: 1,
+        name: 'Jansi',
+        age: 28,
+        email: 'Jansi@gmail.com',
+        profession: {
+            name: null,
+            branches: null,
+            experience: null,
+        }
+        },
+    {
+        id: 2,
+        name: 'Randy',
+        age: 17,
+        email: 'Randy@hotmail.com',
+        profession: {
+            name: null,
+            branches: null,
+            experience: null,
+        },
+    }
+]
+
 export const Users = () => {
-    const [users, setUsers] = React.useState([]);
+    const [users, setUsers] = React.useState(userDemo);
     const [open, setOpen] = React.useState(false);
     const [model, setModel] = React.useState(new UserModel());
-    const [profession, setProfession] = React.useState(null);
-
-    const handleChange = (event, type) => {
-        if (type){
-            setProfession(event.target.value);
-        }else {
-            setProfession(event.target.value);
-        }
-    };
+    const [search, setSearch] = React.useState('');
 
     const onReset = () => {
         setModel(new UserModel())
@@ -77,60 +95,82 @@ export const Users = () => {
     };
 
     const onChange = (e, object, objectName) => {
-        const {type, target}=e
+        const {type, target} = e
         const {name, value} = target
 
-        if (type==='change'){
+        if (type === 'change') {
             setModel(prevState => ({...prevState, [name]: value}))
         }
 
-        if (type==='click' && object ==='profession'){
+        if (type === 'click' && object === 'profession') {
             let prevState = {...model}
             prevState[object][objectName] = value
             setModel(prevState)
         }
     };
 
-  return (
-    <div>
-        <Button variant='outlined' onClick={()=>setOpen(true)}>Nuevo Usuario</Button>
-        <AddUser model={model} open={open} close={onReset} nuevoUsuario={nuevoUsuario} updateUser={updateUser} onChange={onChange} handleChange={handleChange} profession={profession} />
-        <TableContainer component={Paper}>
-            <Table sx={{minWidth: 650}} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell align="center">Users</TableCell>
-                        <TableCell align="center">Age</TableCell>
-                        <TableCell align="center">Profession</TableCell>
-                        <TableCell align="center">Rama</TableCell>
-                        <TableCell align="center">Experiencia</TableCell>
-                        <TableCell align="center">Mail</TableCell>
-                        <TableCell align="center">Acciones</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {users.map((user) => (
-                        <TableRow key={user.id}>
-                            <TableCell align="center">{user.name}</TableCell>
-                            <TableCell align="center">{user.age}</TableCell>
-                            <TableCell align="center">{user.profession.name}</TableCell>
-                            <TableCell align="center">{user.profession.branches}</TableCell>
-                            <TableCell align="center">{user.profession.experience}</TableCell>
-                            <TableCell align="center">{user.email}</TableCell>
+    return (
+        <div>
 
-                            <TableCell align='center'>
-                                <IconButton onClick={()=>onEdit(user.id)} style={{marginRight: 25}} aria-label="delete">
-                                    <EditIcon/>
-                                </IconButton>
-                                <IconButton onClick={()=>onDelete(user.id)} style={{marginRight: 15}} aria-label="delete">
-                                    <ClearIcon color='error'/>
-                                </IconButton>
-                            </TableCell>
+            <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} flexDirection={'row'}>
+                <Button variant='outlined' size={'large'} style={{height:50}} onClick={() => setOpen(true)}>Nuevo Usuario</Button>
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    name="name"
+                    label="Buscar..."
+                    type="text"
+                    size={'small'}
+                    variant="filled"
+                    style={{height:50, textDecorationLine:'none', textDecorationWidth:0}}
+                    value={search}
+                    onChange={(e)=>setSearch(e.target.value)}
+                />
+            </Box>
+
+            <AddUser model={model} open={open} close={onReset} nuevoUsuario={nuevoUsuario} updateUser={updateUser}
+                     onChange={onChange}/>
+            <TableContainer component={Paper}>
+                <Table sx={{minWidth: 650}} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell align="center">Users</TableCell>
+                            <TableCell align="center">Age</TableCell>
+                            <TableCell align="center">Profession</TableCell>
+                            <TableCell align="center">Rama</TableCell>
+                            <TableCell align="center">Experiencia</TableCell>
+                            <TableCell align="center">Mail</TableCell>
+                            <TableCell align="center">Acciones</TableCell>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    </div>
-  )
+                    </TableHead>
+                    <TableBody>
+                        {users.filter(user => {
+                            return user.name.toLowerCase().includes(search) || user.email.toLowerCase().includes(search) || user.age.toString().includes(search)
+                        }).map((user) => (
+                            <TableRow key={user.id}>
+                                <TableCell align="center">{user.name}</TableCell>
+                                <TableCell align="center">{user.age}</TableCell>
+                                <TableCell align="center">{user.profession.name}</TableCell>
+                                <TableCell align="center">{user.profession.branches}</TableCell>
+                                <TableCell align="center">{user.profession.experience}</TableCell>
+                                <TableCell align="center">{user.email}</TableCell>
+
+                                <TableCell align='center'>
+                                    <IconButton onClick={() => onEdit(user.id)} style={{marginRight: 25}}
+                                                aria-label="delete">
+                                        <EditIcon/>
+                                    </IconButton>
+                                    <IconButton onClick={() => onDelete(user.id)} style={{marginRight: 15}}
+                                                aria-label="delete">
+                                        <ClearIcon color='error'/>
+                                    </IconButton>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </div>
+    )
 }
