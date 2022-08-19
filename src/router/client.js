@@ -114,8 +114,7 @@ export default function Client() {
     return (
         <div>
             <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} flexDirection={'row'}>
-                <Button variant='outlined' size={'large'} style={{height: 50}} onClick={() => setOpen(true)}>New
-                    User</Button>
+                <Button variant='outlined' size={'large'} style={{height: 50}} onClick={() => setOpen(true)}>New User</Button>
                 <TextField
                     autoFocus
                     margin="dense"
