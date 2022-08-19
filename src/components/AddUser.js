@@ -34,6 +34,12 @@ export const AddUser = ({nuevoUsuario, updateUser, open, close, onChange, model}
     }, [model.profession.name])
 
 
+    const isDisabled = React.useMemo(() => {
+        console.log(model)
+        return !(model.name.length && model.age > 0  && model.email.length)
+    }, [model])
+
+
     return (
         <div>
             <Dialog open={open} onClose={close}>
@@ -52,7 +58,7 @@ export const AddUser = ({nuevoUsuario, updateUser, open, close, onChange, model}
                         fullWidth
                         variant="standard"
                         value={model.name}
-                        style={{marginBottom:8}}
+                        style={{marginBottom: 8}}
                         onChange={onChange}
                     />
 
@@ -66,7 +72,7 @@ export const AddUser = ({nuevoUsuario, updateUser, open, close, onChange, model}
                         fullWidth
                         variant="standard"
                         value={model.age}
-                        style={{marginBottom:20}}
+                        style={{marginBottom: 20}}
                         onChange={onChange}
                     />
 
@@ -79,7 +85,8 @@ export const AddUser = ({nuevoUsuario, updateUser, open, close, onChange, model}
                                   value={model.profession.branches} options={ProfessionType}/>
 
                     <CustomSelect disabled={!model.profession.branches} style={{marginBottom: 20}} label={'Experiencia'}
-                                  onChange={(e) => onChange(e, 'profession', 'experience')} value={model.profession.experience}
+                                  onChange={(e) => onChange(e, 'profession', 'experience')}
+                                  value={model.profession.experience}
                                   options={Experience}/>
 
                     <TextField
@@ -92,13 +99,13 @@ export const AddUser = ({nuevoUsuario, updateUser, open, close, onChange, model}
                         fullWidth
                         variant="standard"
                         value={model.email}
-                        style={{marginBottom:8}}
+                        style={{marginBottom: 8}}
                         onChange={onChange}
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={close}>Cancel</Button>
-                    <Button disabled={!model.name || !model.age || !model.email} onClick={onClick}>{model.id ? "Update" : "Add"}</Button>
+                    <Button disabled={isDisabled} onClick={onClick}>{model.id ? "Update" : "Add"}</Button>
                 </DialogActions>
             </Dialog>
         </div>
